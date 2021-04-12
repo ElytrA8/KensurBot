@@ -13,7 +13,7 @@ from shutil import which
 
 from telethon import version
 
-from userbot import ALIVE_NAME, CMD_HELP, KENSURBOT_VERSION
+from userbot import ALIVE_NAME, CMD_HELP, KENSURBOT_VERSION, WEATHER_DEFCITY
 from userbot.events import register
 
 # ================= CONSTANT =================
@@ -126,10 +126,12 @@ async def pipcheck(pip):
 async def amireallyalive(alive):
     """ For .alive command, check if the bot is running.  """
     await alive.edit(
-        f"**KensurBot v{KENSURBOT_VERSION} is up and running!**\n\n"
+        f"**KensurBot v{KENSURBOT_VERSION} is up and running!**\n"
+        f"This is a KensurBot++ extension\n"
         f"**Telethon:** {version.__version__}\n"
         f"**Python:** {python_version()}\n"
-        f"**User:** {DEFAULTUSER}"
+        f"**User:** {DEFAULTUSER}\n"
+        f"**City:** {WEATHER_DEFCITY}"
     )
 
 

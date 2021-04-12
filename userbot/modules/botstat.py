@@ -26,8 +26,6 @@ async def amireallyalive(alive):
 
 	APPID = OWM_API
 
-    anonymous = False
-
     if not weather.pattern_match.group(1):
         CITY = DEFCITY
     elif weather.pattern_match.group(1).lower() == "anon":

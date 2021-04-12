@@ -32,11 +32,11 @@ DEFCITY = WEATHER_DEFCITY or None
 @register(outgoing=True, pattern=r"^\.bot(?: |$)(.*)")
 async def amireallyalive(alive):
 
-	APPID = OWM_API
+    APPID = OWM_API
 
-	if not OWM_API:
+    if not OWM_API:
         return await weather.edit(
-        	"**Get an API key from** https://openweathermap.org **first.**"
+            "**Get an API key from** https://openweathermap.org **first.**"
         )
 
     APPID = OWM_API
@@ -84,7 +84,7 @@ async def amireallyalive(alive):
 
     curtemp = result["main"]["temp"]
 
-        def fahrenheit(f):
+    def fahrenheit(f):
         temp = str((f - 273.15) * 9 / 5 + 32).split(".")
         return temp[0]
 

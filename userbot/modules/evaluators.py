@@ -47,30 +47,33 @@ async def evaluate(event):
     stderr = redirected_error.getvalue().strip()
     sys.stdout = old_stdout
     sys.stderr = old_stderr
-<<<<<<< HEAD
     evaluation = str(exc or stderr or stdout or returned)
 
-=======
->>>>>>> upstream/master
     expression.encode("unicode-escape").decode().replace("\\\\", "\\")
+    evaluation.encode("unicode-escape").decode().replace("\\\\", "\\")
 
-    evaluation = str(exc or stderr or stdout or returned)
-    if evaluation and evaluation != "":
-        evaluation = evaluation.encode("unicode-escape").decode().replace("\\\\", "\\")
-    else:
-        evaluation = "None"
-
-    if len(str(evaluation)) >= 4096:
-        with open("output.txt", "w+") as file:
-            file.write(evaluation)
-        await event.client.send_file(
-            event.chat_id,
-            "output.txt",
-            reply_to=event.id,
-            caption="**Output too large, sending as file...**",
-        )
-        return remove("output.txt")
-    await event.edit(f"**Query:**\n`{expression}`\n\n**Result:**\n`{evaluation}`")
+    try:
+        if evaluation:
+            if len(str(evaluation)) >= 4096:
+                with open("output.txt", "w+") as file:
+                    file.write(evaluation)
+                await event.client.send_file(
+                    event.chat_id,
+                    "output.txt",
+                    reply_to=event.id,
+                    caption="**Output too large, sending as file...**",
+                )
+                remove("output.txt")
+                return
+            await event.edit(
+                f"**Query:**\n`{expression}`\n\n**Result:**\n`{evaluation}`"
+            )
+        else:
+            await event.edit(
+                f"**Query:**\n`{expression}`\n\n**Result:**\n`No Result Returned/False`"
+            )
+    except Exception as err:
+        await event.edit(f"**Query:**\n`{expression}`\n\n**Exception:**\n`{err}`")
 
 
 @register(outgoing=True, pattern=r"^\.exec(?: |$|\n)([\s\S]*)")
@@ -100,26 +103,28 @@ async def run(event):
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.STDOUT,
     )
-    codepre.encode("unicode-escape").decode().replace("\\\\", "\\")
-
     stdout, _ = await process.communicate()
-    if stdout and stdout != "":
-        stdout = str(stdout.decode().strip())
-        stdout.encode("unicode-escape").decode().replace("\\\\", "\\")
-    else:
-        stdout = "None"
+    stdout = str(stdout)
 
-    if len(stdout) > 4096:
-        with open("output.txt", "w+") as file:
-            file.write(stdout)
-        await event.client.send_file(
-            event.chat_id,
-            "output.txt",
-            reply_to=event.id,
-            caption="**Output too large, sending as file...**",
+    codepre.encode("unicode-escape").decode().replace("\\\\", "\\")
+    stdout.encode("unicode-escape").decode().replace("\\\\", "\\")
+
+    if stdout:
+        if len(stdout) > 4096:
+            with open("output.txt", "w+") as file:
+                file.write(stdout)
+            await event.client.send_file(
+                event.chat_id,
+                "output.txt",
+                reply_to=event.id,
+                caption="**Output too large, sending as file...**",
+            )
+            return remove("output.txt")
+        await event.edit(f"**Query:**\n`{codepre}`\n\n**Result:**\n`{stdout}`")
+    else:
+        await event.edit(
+            f"**Query:**\n`{codepre}`\n\n**Result:**\n`No result returned/False`"
         )
-        return remove("output.txt")
-    await event.edit(f"**Query:**\n`{codepre}`\n\n**Result:**\n`{stdout}`")
 
 
 @register(outgoing=True, pattern=r"^\.term(?: |$|\n)([\s\S]*)")
@@ -137,14 +142,11 @@ async def terminal_runner(event):
     process = await asyncio.create_subprocess_shell(
         command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT
     )
-    command.encode("unicode-escape").decode().replace("\\\\", "\\")
-
     stdout, _ = await process.communicate()
-    if stdout and stdout != "":
-        result = str(stdout.decode().strip())
-        result.encode("unicode-escape").decode().replace("\\\\", "\\")
-    else:
-        result = "None"
+    stdout = str(stdout)
+
+    command.encode("unicode-escape").decode().replace("\\\\", "\\")
+    stdout.encode("unicode-escape").decode().replace("\\\\", "\\")
 
     if len(stdout) > 4096:
         with open("output.txt", "w+") as output:

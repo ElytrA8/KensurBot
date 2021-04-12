@@ -47,33 +47,25 @@ async def evaluate(event):
     stderr = redirected_error.getvalue().strip()
     sys.stdout = old_stdout
     sys.stderr = old_stderr
-    evaluation = str(exc or stderr or stdout or returned)
-
     expression.encode("unicode-escape").decode().replace("\\\\", "\\")
-    evaluation.encode("unicode-escape").decode().replace("\\\\", "\\")
 
-    try:
-        if evaluation:
-            if len(str(evaluation)) >= 4096:
-                with open("output.txt", "w+") as file:
-                    file.write(evaluation)
-                await event.client.send_file(
-                    event.chat_id,
-                    "output.txt",
-                    reply_to=event.id,
-                    caption="**Output too large, sending as file...**",
-                )
-                remove("output.txt")
-                return
-            await event.edit(
-                f"**Query:**\n`{expression}`\n\n**Result:**\n`{evaluation}`"
-            )
-        else:
-            await event.edit(
-                f"**Query:**\n`{expression}`\n\n**Result:**\n`No Result Returned/False`"
-            )
-    except Exception as err:
-        await event.edit(f"**Query:**\n`{expression}`\n\n**Exception:**\n`{err}`")
+    evaluation = str(exc or stderr or stdout or returned)
+    if evaluation and evaluation != "":
+        evaluation = evaluation.encode("unicode-escape").decode().replace("\\\\", "\\")
+    else:
+        evaluation = "None"
+
+    if len(str(evaluation)) >= 4096:
+        with open("output.txt", "w+") as file:
+            file.write(evaluation)
+        await event.client.send_file(
+            event.chat_id,
+            "output.txt",
+            reply_to=event.id,
+            caption="**Output too large, sending as file...**",
+        )
+        return remove("output.txt")
+    await event.edit(f"**Query:**\n`{expression}`\n\n**Result:**\n`{evaluation}`")
 
 
 @register(outgoing=True, pattern=r"^\.exec(?: |$|\n)([\s\S]*)")
@@ -103,28 +95,26 @@ async def run(event):
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.STDOUT,
     )
-    stdout, _ = await process.communicate()
-    stdout = str(stdout)
-
     codepre.encode("unicode-escape").decode().replace("\\\\", "\\")
-    stdout.encode("unicode-escape").decode().replace("\\\\", "\\")
 
-    if stdout:
-        if len(stdout) > 4096:
-            with open("output.txt", "w+") as file:
-                file.write(stdout)
-            await event.client.send_file(
-                event.chat_id,
-                "output.txt",
-                reply_to=event.id,
-                caption="**Output too large, sending as file...**",
-            )
-            return remove("output.txt")
-        await event.edit(f"**Query:**\n`{codepre}`\n\n**Result:**\n`{stdout}`")
+    stdout, _ = await process.communicate()
+    if stdout and stdout != "":
+        stdout = str(stdout.decode().strip())
+        stdout.encode("unicode-escape").decode().replace("\\\\", "\\")
     else:
-        await event.edit(
-            f"**Query:**\n`{codepre}`\n\n**Result:**\n`No result returned/False`"
+        stdout = "None"
+
+    if len(stdout) > 4096:
+        with open("output.txt", "w+") as file:
+            file.write(stdout)
+        await event.client.send_file(
+            event.chat_id,
+            "output.txt",
+            reply_to=event.id,
+            caption="**Output too large, sending as file...**",
         )
+        return remove("output.txt")
+    await event.edit(f"**Query:**\n`{codepre}`\n\n**Result:**\n`{stdout}`")
 
 
 @register(outgoing=True, pattern=r"^\.term(?: |$|\n)([\s\S]*)")
@@ -142,15 +132,18 @@ async def terminal_runner(event):
     process = await asyncio.create_subprocess_shell(
         command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT
     )
-    stdout, _ = await process.communicate()
-    stdout = str(stdout)
-
     command.encode("unicode-escape").decode().replace("\\\\", "\\")
-    stdout.encode("unicode-escape").decode().replace("\\\\", "\\")
 
-    if len(stdout) > 4096:
+    stdout, _ = await process.communicate()
+    if stdout and stdout != "":
+        result = str(stdout.decode().strip())
+        result.encode("unicode-escape").decode().replace("\\\\", "\\")
+    else:
+        result = "None"
+
+    if len(result) > 4096:
         with open("output.txt", "w+") as output:
-            output.write(stdout)
+            output.write(result)
         await event.client.send_file(
             event.chat_id,
             "output.txt",
@@ -159,7 +152,7 @@ async def terminal_runner(event):
         )
         return remove("output.txt")
 
-    await event.edit(f"**Command:**\n`{command}`\n\n**Result:**\n`{stdout}`")
+    await event.edit(f"**Command:**\n`{command}`\n\n**Result:**\n`{result}`")
 
 
 CMD_HELP.update(

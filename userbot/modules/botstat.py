@@ -35,7 +35,7 @@ async def amireallyalive(alive):
     APPID = OWM_API
 
     if not OWM_API:
-        return await weather.edit(
+        return await alive.edit(
             "**Get an API key from** https://openweathermap.org **first.**"
         )
 
@@ -43,16 +43,16 @@ async def amireallyalive(alive):
 
     anonymous = False
 
-    if not weather.pattern_match.group(1):
+    if not alive.pattern_match.group(1):
         CITY = DEFCITY
-    elif weather.pattern_match.group(1).lower() == "anon":
+    elif alive.pattern_match.group(1).lower() == "anon":
         CITY = DEFCITY
         anonymous = True
     else:
-        CITY = weather.pattern_match.group(1)
+        CITY = alive.pattern_match.group(1)
 
     if not CITY:
-        return await weather.edit(
+        return await alive.edit(
             "**Please specify a city or set one as default using the WEATHER_DEFCITY config variable.**"
         )
 
@@ -72,7 +72,7 @@ async def amireallyalive(alive):
             try:
                 countrycode = timezone_countries[f"{country}"]
             except KeyError:
-                return await weather.edit("**Invalid country.**")
+                return await alive.edit("**Invalid country.**")
             CITY = newcity[0].strip() + "," + countrycode.strip()
 
     url = f"https://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={APPID}"
@@ -80,7 +80,7 @@ async def amireallyalive(alive):
     result = json.loads(request.text)
 
     if request.status_code != 200:
-        return await weather.edit("**Invalid country.**")
+        return await alive.edit("**Invalid country.**")
 
     curtemp = result["main"]["temp"]
 

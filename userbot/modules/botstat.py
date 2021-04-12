@@ -21,23 +21,16 @@ from userbot.events import register
 DEFAULTUSER = ALIVE_NAME or "Set `ALIVE_NAME` ConfigVar!"
 # ============================================
 
+# ===== CONSTANT =====
+DEFCITY = WEATHER_DEFCITY or None
+
 @register(outgoing=True, pattern=r"^\.bot$")
 async def amireallyalive(alive):
 
 	APPID = OWM_API
+    
+    CITY = DEFCITY
 
-    if not weather.pattern_match.group(1):
-        CITY = DEFCITY
-    elif weather.pattern_match.group(1).lower() == "anon":
-        CITY = DEFCITY
-        anonymous = True
-    else:
-        CITY = weather.pattern_match.group(1)
-
-    if not CITY:
-        return await weather.edit(
-            "**Please specify a city or set one as default using the WEATHER_DEFCITY config variable.**"
-        )
 
         if "," in CITY:
         newcity = CITY.split(",")

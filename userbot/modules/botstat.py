@@ -34,7 +34,7 @@ async def amireallyalive(alive):
 
 	APPID = OWM_API
 
-	    if not OWM_API:
+	if not OWM_API:
         return await weather.edit(
             "**Get an API key from** https://openweathermap.org **first.**"
         )
@@ -110,6 +110,6 @@ async def amireallyalive(alive):
 CMD_HELP.update(
 	{
 		"stat module\n"
-		"**usage:** .stat"
+		"**usage:** .botstat"
 	}
 )

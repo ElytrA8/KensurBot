@@ -36,7 +36,7 @@ async def amireallyalive(alive):
 
 	if not OWM_API:
         return await weather.edit(
-            "**Get an API key from** https://openweathermap.org **first.**"
+        	"**Get an API key from** https://openweathermap.org **first.**"
         )
 
     APPID = OWM_API

@@ -22,14 +22,12 @@ DEFAULTUSER = ALIVE_NAME or "Set `ALIVE_NAME` ConfigVar!"
 # ============================================
 
 # ===== CONSTANT =====
-DEFCITY = WEATHER_DEFCITY or None
+CITY = WEATHER_DEFCITY or None
 
 @register(outgoing=True, pattern=r"^\.bot$")
 async def amireallyalive(alive):
 
 	APPID = OWM_API
-    
-    CITY = DEFCITY
 
 
         if "," in CITY:

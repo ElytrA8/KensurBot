@@ -1,0 +1,93 @@
+# Copyright (C) 2019 The Raphielscape Company LLC.
+#
+# Licensed under the Raphielscape Public License, Version 1.c (the "License");
+# you may not use this file except in compliance with the License.
+#
+""" Userbot module for getting information about the server. """
+
+from asyncio import create_subprocess_exec as asyncrunapp
+from asyncio.subprocess import PIPE as asyncPIPE
+from os import remove
+from platform import python_version, uname
+from shutil import which
+
+from telethon import version
+
+from userbot import ALIVE_NAME, CMD_HELP, KENSURBOT_VERSION, WEATHER_DEFCITY
+from userbot import OPEN_WEATHER_MAP_APPID as OWM_API
+from userbot.events import register
+
+# ================= CONSTANT =================
+DEFAULTUSER = ALIVE_NAME or "Set `ALIVE_NAME` ConfigVar!"
+# ============================================
+
+@register(outgoing=True, pattern=r"^\.bot$")
+async def amireallyalive(alive):
+
+	APPID = OWM_API
+
+    anonymous = False
+
+    if not weather.pattern_match.group(1):
+        CITY = DEFCITY
+    elif weather.pattern_match.group(1).lower() == "anon":
+        CITY = DEFCITY
+        anonymous = True
+    else:
+        CITY = weather.pattern_match.group(1)
+
+    if not CITY:
+        return await weather.edit(
+            "**Please specify a city or set one as default using the WEATHER_DEFCITY config variable.**"
+        )
+
+        if "," in CITY:
+        newcity = CITY.split(",")
+        if len(newcity[1]) == 2:
+            CITY = newcity[0].strip() + "," + newcity[1].strip()
+        else:
+            country = await get_tz((newcity[1].strip()).title())
+            try:
+                countrycode = timezone_countries[f"{country}"]
+            except KeyError:
+                return await weather.edit("**Invalid country.**")
+            CITY = newcity[0].strip() + "," + countrycode.strip()
+
+    url = f"https://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={APPID}"
+    request = get(url)
+    result = json.loads(request.text)
+
+    if request.status_code != 200:
+        return await weather.edit("**Invalid country.**")
+
+    curtemp = result["main"]["temp"]
+
+        def fahrenheit(f):
+        temp = str((f - 273.15) * 9 / 5 + 32).split(".")
+        return temp[0]
+
+    def celsius(c):
+        temp = str(c - 273.15).split(".")
+        return temp[0]
+
+
+    """ For .alive command, check if the bot is running.  """
+    await alive.edit(
+        f"**KensurBot v{KENSURBOT_VERSION} is up and running!**\n\n"
+        f"This is a unoffical version of the KensurBot made by\n"
+        f"the great just6chill\n\n"
+        f"**Telethon:** {version.__version__}\n"
+        f"**Python:** {python_version()}\n"
+        f"**User:** {DEFAULTUSER}\n"
+        f"**City:** {WEATHER_DEFCITY}\n\n"
+        f"**current weather in {WEATHER_DEFCITY}:** {celsius(curtemp)}°C | {fahrenheit(curtemp)}°F\n"
+    )
+
+
+
+CMD_HELP.update(
+	{
+		"stat module\n"
+		"**usage:** .stat"
+	}
+)

@@ -108,8 +108,8 @@ async def amireallyalive(alive):
 
 
 CMD_HELP.update(
-	{
-		"stat module\n"
-		"**usage:** .botstat"
-	}
+    {
+        "uage": ".botstat"
+        "\nmodule made by just6chill."
+    }
 )

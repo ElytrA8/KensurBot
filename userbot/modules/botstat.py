@@ -10,6 +10,11 @@ from asyncio.subprocess import PIPE as asyncPIPE
 from os import remove
 from platform import python_version, uname
 from shutil import which
+import json
+from pytz import country_names as c_n
+from pytz import country_timezones as c_tz
+from pytz import timezone as tz
+from requests import get
 
 from telethon import version
 
@@ -22,15 +27,43 @@ DEFAULTUSER = ALIVE_NAME or "Set `ALIVE_NAME` ConfigVar!"
 # ============================================
 
 # ===== CONSTANT =====
-CITY = WEATHER_DEFCITY or None
+DEFCITY = WEATHER_DEFCITY or None
 
-@register(outgoing=True, pattern=r"^\.bot$")
+@register(outgoing=True, pattern=r"^\.bot(?: |$)(.*)")
 async def amireallyalive(alive):
 
 	APPID = OWM_API
 
+	    if not OWM_API:
+        return await weather.edit(
+            "**Get an API key from** https://openweathermap.org **first.**"
+        )
 
-        if "," in CITY:
+    APPID = OWM_API
+
+    anonymous = False
+
+    if not weather.pattern_match.group(1):
+        CITY = DEFCITY
+    elif weather.pattern_match.group(1).lower() == "anon":
+        CITY = DEFCITY
+        anonymous = True
+    else:
+        CITY = weather.pattern_match.group(1)
+
+    if not CITY:
+        return await weather.edit(
+            "**Please specify a city or set one as default using the WEATHER_DEFCITY config variable.**"
+        )
+
+    timezone_countries = {
+        timezone: country
+        for country, timezones in c_tz.items()
+        for timezone in timezones
+    }
+
+
+    if "," in CITY:
         newcity = CITY.split(",")
         if len(newcity[1]) == 2:
             CITY = newcity[0].strip() + "," + newcity[1].strip()

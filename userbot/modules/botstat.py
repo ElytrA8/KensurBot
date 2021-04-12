@@ -104,12 +104,3 @@ async def amireallyalive(alive):
         f"**City:** {WEATHER_DEFCITY}\n\n"
         f"**current weather in {WEATHER_DEFCITY}:** {celsius(curtemp)}°C | {fahrenheit(curtemp)}°F\n"
     )
-
-
-
-CMD_HELP.update(
-    {
-        "uage": ".botstat"
-        "\nmodule made by just6chill."
-    }
-)

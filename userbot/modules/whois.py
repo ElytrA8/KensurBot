@@ -17,6 +17,17 @@ from telethon.utils import get_input_location
 from userbot import CMD_HELP, TEMP_DOWNLOAD_DIRECTORY
 from userbot.events import register
 
+@register(pattern=r"\.kill(?: |$)(.*)", outgoing=True)
+async def get_user(event):
+    """ Get the user from argument or replied message. """
+    if event.reply_to_msg_id and not event.pattern_match.group(1):
+        previous_message = await event.get_reply_message()
+        if previous_message.from_id is None and not event.is_private:
+            return None
+        replied_user = await event.client(
+            "```killed with headshot```"
+        )
+
 
 @register(pattern=r"\.whois(?: |$)(.*)", outgoing=True)
 async def who(event):

@@ -18,7 +18,7 @@ from userbot import CMD_HELP, TEMP_DOWNLOAD_DIRECTORY
 from userbot.events import register
 
 @register(pattern=r"\.kill(?: |$)(.*)", outgoing=True)
-async def who(event):
+async def kill(event):
 
     await event.edit(
         "**Sit tight while I steal some data from the Global Network Zone...**"
@@ -62,7 +62,7 @@ async def who(event):
         await event.edit(caption, parse_mode=r"html")
 
 
-async def get_user(event):
+async def get_user_kill(event):
     """ Get the user from argument or replied message. """
     if event.reply_to_msg_id and not event.pattern_match.group(1):
         previous_message = await event.get_reply_message()
@@ -97,7 +97,7 @@ async def get_user(event):
     return replied_user
 
 
-async def fetch_info(replied_user, event):
+async def fetch_info_kill(replied_user, event):
     """ Get details from the User object. """
     replied_user_profile_photos = await event.client(
         GetUserPhotosRequest(

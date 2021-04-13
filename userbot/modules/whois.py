@@ -34,7 +34,7 @@ async def kill(event):
         )
 
     try:
-        photo, caption = await fetch_info(replied_user, event)
+        photo, caption = await fetch_info_kill(replied_user, event)
     except AttributeError:
         return await event.edit("**Couldn't fetch the info of this user.**")
 

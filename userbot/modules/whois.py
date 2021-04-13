@@ -21,8 +21,7 @@ from userbot.events import register
 async def kill(event):
 
     await event.edit(
-        "**Sit tight while I steal some data from the Global Network Zone...**"
-    )
+        "preparing gun"
 
     if not os.path.isdir(TEMP_DOWNLOAD_DIRECTORY):
         os.makedirs(TEMP_DOWNLOAD_DIRECTORY)
@@ -139,9 +138,10 @@ async def fetch_info_kill(replied_user, event):
     username = f"@{username}" if username else ("This User has no Username")
     user_bio = "This User has no About" if not user_bio else user_bio
 
-    caption = "killed {first_name} with headshot"
+    caption = "killed" 
+    caption += f" {first_name} with headshot"
 
-    return photo, caption
+    return caption
 
 
 @register(pattern=r"\.whois(?: |$)(.*)", outgoing=True)
